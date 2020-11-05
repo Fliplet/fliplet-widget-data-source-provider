@@ -660,7 +660,7 @@ __webpack_require__.r(__webpack_exports__);
         });
       });
 
-      if (includedAccessTypes.length !== this.widgetData.accessRules[0].type.length) {
+      if (this.widgetData.accessRules.length && includedAccessTypes.length !== this.widgetData.accessRules[0].type.length) {
         this.securityEnabled = false;
         return;
       }
@@ -693,7 +693,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this3.hasAccessRules();
 
-        _this2.dataSources = _this2.formatDataSources();
+        _this3.dataSources = _this3.formatDataSources();
         Fliplet.Widget.emit('dataSourceSelect', dataSource);
       })["catch"](function (err) {
         _this3.showError(Fliplet.parseError(err));

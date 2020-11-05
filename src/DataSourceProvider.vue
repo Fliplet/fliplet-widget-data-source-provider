@@ -197,7 +197,7 @@ export default {
         });
       });
 
-      if (includedAccessTypes.length !== this.widgetData.accessRules[0].type.length) {
+      if (this.widgetData.accessRules.length && includedAccessTypes.length !== this.widgetData.accessRules[0].type.length) {
         this.securityEnabled = false;
 
         return;
