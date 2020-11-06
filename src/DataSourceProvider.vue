@@ -4,17 +4,17 @@
       <strong>{{ widgetData.dataSourceTitle || 'Select a data source' }}</strong>
     </div>
 
-    <div v-if="isLoading" class="spinner-holder animated">
-      <div class="spinner-overlay">Loading...</div>
-    </div>
-
-    <div v-else class="main-data-source-provider">
+    <div class="main-data-source-provider">
       <section class="data-source-selector">
         <div v-if="dataSources.length || (!dataSources.length && !selectedDataSource)">
           <label for="data-source-select" class="select-proxy-display">
+            <div v-if="isLoading" class="spinner-position animated">
+              <div class="spinner-overlay">Loading...</div>
+            </div>
             <select
               ref="select"
               class="hidden-select form-control"
+              :class="{ 'select-overlay': isLoading }"
               @change="onSelectChange"
               :value="selectedDataSource ? selectedDataSource.id : ''"
             >
