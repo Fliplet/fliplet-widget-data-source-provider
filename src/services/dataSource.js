@@ -8,7 +8,7 @@ export const getDataSource = (dataSourceId) => {
   return Fliplet.DataSources.getById(dataSourceId, { cache: false });
 };
 
-export const createDataSource = (data, increment) => {
+export const createDataSource = (data, context) => {
   return Fliplet.Modal.prompt({
     title: 'Enter a name for the data source',
     value: data.default.name || ''
@@ -27,7 +27,7 @@ export const createDataSource = (data, increment) => {
           });
       }
 
-      increment.isLoading = true;
+      context.isLoading = true;
 
       return Fliplet.DataSources.create({
         name: dataSourceName,

@@ -174,7 +174,7 @@ var render = function() {
             expression: "isLoading"
           }
         ],
-        staticClass: "spiner-position animated"
+        staticClass: "spinner-container animated"
       },
       [_c("div", { staticClass: "spinner-overlay" }, [_vm._v("Loading...")])]
     ),
@@ -1034,7 +1034,7 @@ var getDataSource = function getDataSource(dataSourceId) {
     cache: false
   });
 };
-var createDataSource = function createDataSource(data, increment) {
+var createDataSource = function createDataSource(data, context) {
   return Fliplet.Modal.prompt({
     title: 'Enter a name for the data source',
     value: data["default"].name || ''
@@ -1042,8 +1042,6 @@ var createDataSource = function createDataSource(data, increment) {
     if (dataSourceName === null) {
       return;
     }
-
-    debugger;
 
     if (!dataSourceName) {
       return Fliplet.Modal.alert({
@@ -1053,8 +1051,7 @@ var createDataSource = function createDataSource(data, increment) {
       });
     }
 
-    increment.isLoading = true;
-    console.log(increment);
+    context.isLoading = true;
     return Fliplet.DataSources.create({
       name: dataSourceName,
       appId: data.appId,
