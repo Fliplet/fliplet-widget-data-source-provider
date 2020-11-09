@@ -4,6 +4,7 @@
 
 .container {
   overflow: hidden;
+  position: relative;
   padding: 0; }
 
 .alert {
@@ -17,10 +18,10 @@
   opacity: 0.6;
   pointer-events: none; }
 
-.spinner-position {
-  height: 44px;
-  display: flex;
-  align-items: center; }
+.spiner-position {
+  position: absolute;
+  top: 50%;
+  left: 50%; }
 
 .btn-security {
   width: 100%;
