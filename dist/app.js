@@ -163,21 +163,11 @@ var render = function() {
       ])
     ]),
     _vm._v(" "),
-    _c(
-      "div",
-      {
-        directives: [
-          {
-            name: "show",
-            rawName: "v-show",
-            value: _vm.isLoading,
-            expression: "isLoading"
-          }
-        ],
-        staticClass: "spinner-container animated"
-      },
-      [_c("div", { staticClass: "spinner-overlay" }, [_vm._v("Loading...")])]
-    ),
+    _vm.isLoading
+      ? _c("div", { staticClass: "spinner-container animated" }, [
+          _c("div", { staticClass: "spinner-overlay" }, [_vm._v("Loading...")])
+        ])
+      : _vm._e(),
     _vm._v(" "),
     _c(
       "div",
@@ -876,7 +866,8 @@ __webpack_require__.r(__webpack_exports__);
           data: {
             context: 'overlay',
             dataSourceId: this.selectedDataSource.id
-          }
+          },
+          helpLink: 'https://help.fliplet.com/data-sources/'
         }
       });
     }
