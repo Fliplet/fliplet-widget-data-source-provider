@@ -4,7 +4,7 @@
       <strong>{{ widgetData.dataSourceTitle || 'Select a data source' }}</strong>
     </div>
 
-    <div v-show="isLoading" class="spinner-container animated">
+    <div v-if="isLoading" class="spinner-container animated">
       <div class="spinner-overlay">Loading...</div>
     </div>
 
@@ -398,7 +398,8 @@ export default {
           data: {
             context: 'overlay',
             dataSourceId: this.selectedDataSource.id
-          }
+          },
+          helpLink: 'https://help.fliplet.com/data-sources/'
         }
       });
     }
