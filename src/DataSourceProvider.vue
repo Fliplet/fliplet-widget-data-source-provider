@@ -440,8 +440,12 @@ export default {
 
         this.dataSources = this.formatDataSources();
 
-        if (this.selectedDataSource && !this.dataSources.some(currDS => currDS.id === this.selectedDataSource.id)) {
-          this.selectedDataSource = null;
+        if (this.selectedDataSource) {
+          let targetSources = this.allDataSources.length ? this.allDataSources : this.dataSources;
+
+          if (!targetSources.some(currDS => currDS.id === this.selectedDataSource.id)) {
+            this.selectedDataSource = null;
+          }
         }
 
         // Give VUE time to reset templates
