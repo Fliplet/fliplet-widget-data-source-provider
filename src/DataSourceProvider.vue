@@ -8,10 +8,7 @@
       <div class="spinner-overlay">Loading...</div>
     </div>
 
-    <div
-      class="main-data-source-provider"
-      :class="{ 'select-overlay': isLoading }"
-    >
+    <div class="main-data-source-provider" :class="{ 'select-overlay': isLoading }">
       <section class="data-source-selector">
         <div v-if="dataSources.length || (!dataSources.length && !selectedDataSource)">
           <label for="data-source-select" class="select-proxy-display">
@@ -154,17 +151,75 @@ export default {
 
       this.loadDataSources(this.widgetData.appId);
     },
+    enableRequiredRules() {
+      this.selectedDataSource.accessRules.forEach(dataSourceRule => {
+        if (dataSourceRule.enabled) {
+          return;
+        }
+
+        let enabledAccessTypes = [];
+
+        // If this rule has any missing access rule
+        this.missingAccessTypes.forEach((missingRule) => {
+          if (dataSourceRule.type.includes(missingRule)) {
+            // If this rule for all or for current app
+            if (
+              (!dataSourceRule.appId || dataSourceRule.appId.includes(this.widgetData.appId))
+            ) {
+              enabledAccessTypes.push(missingRule);
+
+              // Enable access rule
+              dataSourceRule.enabled = true;
+            }
+          }
+        });
+
+        this.missingAccessTypes = _.difference(this.missingAccessTypes, enabledAccessTypes);
+      });
+    },
     onAddDefaultSecurity() {
       this.isLoading = true;
 
-      if (this.selectedDataSource.accessRules && this.selectedDataSource.accessRules.length > 0) {
-        this.widgetData.accessRules.forEach((defaultRule, index, array) => {
-          array[index].type = this.missingAccessTypes;
+      const defaultRules = _.cloneDeep(this.widgetData.accessRules);
 
-          this.selectedDataSource.accessRules.push(defaultRule);
+      if (this.selectedDataSource.accessRules && this.selectedDataSource.accessRules.length > 0) {
+        this.enableRequiredRules();
+
+        defaultRules.forEach(defaultRule => {
+          defaultRule.type = this.missingAccessTypes;
+          defaultRule.enabled = true;
+
+          let accessRuleFound = this.selectedDataSource.accessRules.some(rule => {
+            // Rule considered as duplicated in case if we have the same rule types and same allow option.
+            // And it's enabled
+            // And it's related to all apps or to the current app
+            return (
+              defaultRule.allow === rule.allow
+                && !_.difference(rule.type, defaultRule.type).length
+                && rule.enabled
+                && (!rule.appId || rule.appId.includes(this.widgetData.appId))
+            );
+          });
+
+          // Add new rule only if it is not found
+          // Or we if we have a missing rules to add
+          if (!accessRuleFound && this.missingAccessTypes.length) {
+            // Split rules for each rule type
+            // To add them as separate rules
+            defaultRule.type.forEach((type) => {
+              this.selectedDataSource.accessRules.push({
+                ...defaultRule,
+                type
+              });
+            });
+          }
         });
       } else {
-        this.selectedDataSource.accessRules = this.widgetData.accessRules;
+        this.selectedDataSource.accessRules = this.widgetData.accessRules.map(defaultRule => {
+          defaultRule.enabled = true;
+
+          return defaultRule;
+        });
       }
 
       updateDataSourceSecurityRules(this.selectedDataSource.id, this.selectedDataSource.accessRules)
@@ -186,6 +241,7 @@ export default {
     hasAccessRules() {
       if (!this.selectedDataSource) {
         this.securityEnabled = false;
+
         return;
       }
 
@@ -193,13 +249,14 @@ export default {
         this.selectedDataSource.accessRules = this.defaultAccessRules;
       }
 
-      if (this.selectedDataSource.accessRules === null || !this.selectedDataSource.accessRules.length) {
+      if (!this.selectedDataSource.accessRules.length) {
         this.securityEnabled = false;
         this.missingAccessTypes = this.widgetData.accessRules.map(rule => {
           return rule.type.map(accessType => {
             return accessType;
           });
         });
+
         return;
       }
 
@@ -210,7 +267,11 @@ export default {
       this.selectedDataSource.accessRules.forEach(dataSourceRules => {
         this.widgetData.accessRules.forEach(componentRules => {
           componentRules.type.forEach(componentType => {
-            if (dataSourceRules.type.includes(componentType)) {
+            if (
+              dataSourceRules.type.includes(componentType)
+              && dataSourceRules.enabled
+              && (!dataSourceRules.appId || dataSourceRules.appId.includes(this.widgetData.appId))
+            ) {
               includedAccessTypes.push(componentType);
             }
           });
@@ -298,7 +359,7 @@ export default {
     loadDataSources(appId) {
       getDataSources(appId)
         .then(dataSources => {
-          if (this.widgetData.dataSourceId) {
+          if (this.widgetData.dataSourceId && this.selectedDataSource) {
             const selectedDataSourceFound = dataSources.some(dataSource => {
               return dataSource.id === this.selectedDataSource.id;
             });
@@ -407,6 +468,7 @@ export default {
       if (aValue < bValue) {
         return -1;
       }
+
       if (aValue > bValue) {
         return 1;
       }
@@ -497,6 +559,7 @@ export default {
         if (value) {
           if (!this.copyOfAllDataSources.length) {
             this.loadDataSources();
+
             return;
           }
 
