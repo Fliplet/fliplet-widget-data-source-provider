@@ -682,7 +682,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
       var defaultRules = _.cloneDeep(this.widgetData.accessRules);
 
       if (this.selectedDataSource.accessRules && this.selectedDataSource.accessRules.length > 0) {
-        this.addCurrentApp();
+        this.addAppToExistginRule();
         this.enableRequiredRules();
         defaultRules.forEach(function (defaultRule) {
           defaultRule.type = _this3.missingAccessTypes;

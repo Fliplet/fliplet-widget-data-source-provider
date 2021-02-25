@@ -203,7 +203,7 @@ export default {
       const defaultRules = _.cloneDeep(this.widgetData.accessRules);
 
       if (this.selectedDataSource.accessRules && this.selectedDataSource.accessRules.length > 0) {
-        this.addCurrentApp();
+        this.addAppToExistginRule();
         this.enableRequiredRules();
 
         defaultRules.forEach(defaultRule => {
