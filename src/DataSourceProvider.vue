@@ -151,6 +151,26 @@ export default {
 
       this.loadDataSources(this.widgetData.appId);
     },
+    addAppToExistginRule() {
+      this.selectedDataSource.accessRules.forEach(dataSourceRule => {
+        if (dataSourceRule.appId && !dataSourceRule.appId.includes(this.widgetData.appId)) {
+          if (!_.difference(this.missingAccessTypes, dataSourceRule.type).length) {
+            return dataSourceRule.appId.push(this.widgetData.appId);
+          }
+
+          let enabledAccessTypes = [];
+
+          this.missingAccessTypes.forEach(missingRule => {
+            if (dataSourceRule.type.includes(missingRule) && dataSourceRule.type.length === 1) {
+              enabledAccessTypes.push(missingRule);
+              dataSourceRule.appId.push(this.widgetData.appId);
+            }
+          });
+
+          this.missingAccessTypes = _.difference(this.missingAccessTypes, enabledAccessTypes);
+        }
+      });
+    },
     enableRequiredRules() {
       this.selectedDataSource.accessRules.forEach(dataSourceRule => {
         if (dataSourceRule.enabled) {
@@ -183,6 +203,7 @@ export default {
       const defaultRules = _.cloneDeep(this.widgetData.accessRules);
 
       if (this.selectedDataSource.accessRules && this.selectedDataSource.accessRules.length > 0) {
+        this.addCurrentApp();
         this.enableRequiredRules();
 
         defaultRules.forEach(defaultRule => {
