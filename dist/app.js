@@ -632,7 +632,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
       var _this = this;
 
       this.selectedDataSource.accessRules.forEach(function (dataSourceRule) {
-        if (!dataSourceRule.appId || dataSourceRule.appId.includes(_this.widgetData.appId)) {
+        if (!dataSourceRule.appId || !dataSourceRule.appId.length || dataSourceRule.appId.includes(_this.widgetData.appId)) {
           return;
         }
 

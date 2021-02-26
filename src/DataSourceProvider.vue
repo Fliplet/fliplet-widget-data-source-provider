@@ -153,7 +153,7 @@ export default {
     },
     addAppToExistingRule() {
       this.selectedDataSource.accessRules.forEach(dataSourceRule => {
-        if (!dataSourceRule.appId || dataSourceRule.appId.includes(this.widgetData.appId)) {
+        if (!dataSourceRule.appId || !dataSourceRule.appId.length || dataSourceRule.appId.includes(this.widgetData.appId)) {
           return;
         }
 
