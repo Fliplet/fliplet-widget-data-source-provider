@@ -628,26 +628,28 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
       this.loadDataSources(this.widgetData.appId);
     },
-    addAppToExistginRule: function addAppToExistginRule() {
+    addAppToExistingRule: function addAppToExistingRule() {
       var _this = this;
 
       this.selectedDataSource.accessRules.forEach(function (dataSourceRule) {
-        if (dataSourceRule.appId && !dataSourceRule.appId.includes(_this.widgetData.appId)) {
-          if (!_.difference(_this.missingAccessTypes, dataSourceRule.type).length) {
-            return dataSourceRule.appId.push(_this.widgetData.appId);
-          }
-
-          var enabledAccessTypes = [];
-
-          _this.missingAccessTypes.forEach(function (missingRule) {
-            if (dataSourceRule.type.includes(missingRule) && dataSourceRule.type.length === 1) {
-              enabledAccessTypes.push(missingRule);
-              dataSourceRule.appId.push(_this.widgetData.appId);
-            }
-          });
-
-          _this.missingAccessTypes = _.difference(_this.missingAccessTypes, enabledAccessTypes);
+        if (dataSourceRule.appId && dataSourceRule.appId.includes(_this.widgetData.appId)) {
+          return;
         }
+
+        if (!_.difference(_this.missingAccessTypes, dataSourceRule.type).length) {
+          return dataSourceRule.appId.push(_this.widgetData.appId);
+        }
+
+        var enabledAccessTypes = [];
+
+        _this.missingAccessTypes.forEach(function (missingRule) {
+          if (dataSourceRule.type.includes(missingRule) && dataSourceRule.type.length === 1) {
+            enabledAccessTypes.push(missingRule);
+            dataSourceRule.appId.push(_this.widgetData.appId);
+          }
+        });
+
+        _this.missingAccessTypes = _.difference(_this.missingAccessTypes, enabledAccessTypes);
       });
     },
     enableRequiredRules: function enableRequiredRules() {
@@ -682,7 +684,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
       var defaultRules = _.cloneDeep(this.widgetData.accessRules);
 
       if (this.selectedDataSource.accessRules && this.selectedDataSource.accessRules.length > 0) {
-        this.addAppToExistginRule();
+        this.addAppToExistingRule();
         this.enableRequiredRules();
         defaultRules.forEach(function (defaultRule) {
           defaultRule.type = _this3.missingAccessTypes;
