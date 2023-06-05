@@ -565,7 +565,6 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 //
 //
 //
-//
 
 Vue.use(window.vuelidate["default"]);
 var required = window.validators.required;
@@ -841,7 +840,7 @@ var required = window.validators.required;
         _this5.dataSources = _this5.formatDataSources();
         Fliplet.Widget.emit('dataSourceSelect', dataSource);
       })["catch"](function (err) {
-        if (err.responseJSON && err.responseJSON.handled) {
+        if (Fliplet.Error.isHandled(err)) {
           return;
         }
 

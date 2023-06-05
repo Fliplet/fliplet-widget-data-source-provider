@@ -17,8 +17,7 @@
                 ref="select"
                 class="hidden-select form-control"
                 @change="onSelectChange"
-                :value="selectedDataSource ? selectedDataSource.id : ''"
-              >
+                :value="selectedDataSource ? selectedDataSource.id : ''">
                 <option value>-- Select data source</option>
                 <option v-if="!dataSources.length" value="none" disabled>(No data source found)</option>
                 <template v-else-if="dataSources.length">
@@ -371,7 +370,7 @@ export default {
           Fliplet.Widget.emit('dataSourceSelect', dataSource);
         })
         .catch(err => {
-          if (err.responseJSON  && err.responseJSON.handled) {
+          if (Fliplet.Error.isHandled(err)) {
             return;
           }
 
