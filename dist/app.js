@@ -1067,6 +1067,16 @@ var required = window.validators.required;
 
             break;
 
+          case 'set-data':
+            // Update data source based on ID
+            _this9.onSelectChange({
+              target: {
+                value: event.data.value
+              }
+            });
+
+            break;
+
           case 'widget-autosize':
             Fliplet.Widget.autosize();
             break;

@@ -599,6 +599,11 @@ export default {
             }
 
             break;
+          case 'set-data':
+            // Update data source based on ID
+            this.onSelectChange({ target: { value: event.data.value } });
+
+            break;
           case 'widget-autosize':
             Fliplet.Widget.autosize();
 
