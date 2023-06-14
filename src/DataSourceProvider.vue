@@ -17,8 +17,7 @@
                 ref="select"
                 class="hidden-select form-control"
                 @change="onSelectChange"
-                :value="selectedDataSource ? selectedDataSource.id : ''"
-              >
+                :value="selectedDataSource ? selectedDataSource.id : ''">
                 <option value>-- Select data source</option>
                 <option v-if="!dataSources.length" value="none" disabled>(No data source found)</option>
                 <template v-else-if="dataSources.length">
@@ -594,6 +593,11 @@ export default {
             if (!this.securityEnabled && this.selectedDataSource) {
               this.confirmAccessRules();
             }
+
+            break;
+          case 'set-data':
+            // Update data source based on ID
+            this.onSelectChange({ target: { value: event.data.value } });
 
             break;
           case 'widget-autosize':
