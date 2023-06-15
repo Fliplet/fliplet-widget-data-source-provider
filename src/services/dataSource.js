@@ -26,7 +26,7 @@ export const createDataSource = (data, context) => {
 
       if (!dataSourceName) {
         return Fliplet.Modal.alert({
-          message: 'Data source name can\'t be empty. Plaese enter data source name again.'
+          message: 'Data source name can\'t be empty. Please enter data source name again.'
         })
           .then(() => {
             return createDataSource(data);

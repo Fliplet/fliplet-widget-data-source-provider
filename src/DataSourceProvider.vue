@@ -422,6 +422,10 @@ export default {
 
           this.dataSources = this.formatDataSources();
           this.hasAccessRules();
+
+          Fliplet.Studio.emit('data-sources-loaded', {
+            dataSources: dataSources
+          });
         })
         .catch(err => {
           this.showError(Fliplet.parseError(err));
@@ -576,7 +580,7 @@ export default {
       if (event.data) {
         switch (event.data.event) {
           case 'overlay-close':
-            if (event.data.classes === 'data-source-overlay') {
+            if (event.data.classes === 'data-source-overlay' && this.selectedDataSource) {
               this.loadSelectedDataSource(this.selectedDataSource.id);
             }
 
