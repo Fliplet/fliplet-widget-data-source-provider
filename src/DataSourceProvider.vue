@@ -602,6 +602,10 @@ export default {
             }
 
             break;
+          case 'change-data-source':
+            this.onDataSourceChange();
+
+            break;
           case 'set-data':
             // Update data source based on ID
             this.onSelectChange({ target: { value: event.data.value } });

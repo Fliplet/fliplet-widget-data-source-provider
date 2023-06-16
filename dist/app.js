@@ -1071,6 +1071,11 @@ var required = window.validators.required;
 
             break;
 
+          case 'change-data-source':
+            _this10.onDataSourceChange();
+
+            break;
+
           case 'set-data':
             // Update data source based on ID
             _this10.onSelectChange({
