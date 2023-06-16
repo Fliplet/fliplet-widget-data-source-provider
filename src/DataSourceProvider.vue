@@ -157,7 +157,10 @@ export default {
       this.widgetData = Fliplet.Widget.getData();
 
       if (this.widgetData.dataSourceId) {
-        return this.loadSelectedDataSource(this.widgetData.dataSourceId);
+        return this.loadSelectedDataSource(this.widgetData.dataSourceId)
+          .then(() => {
+            Fliplet.Widget.emit('selected-data-source-loaded', this.widgetData.dataSourceId);
+          });
       }
 
       this.loadDataSources(this.widgetData.appId);
@@ -381,7 +384,7 @@ export default {
         });
     },
     loadSelectedDataSource(dataSourceId) {
-      getDataSource(dataSourceId)
+      return getDataSource(dataSourceId)
         .then(dataSource => {
           this.selectedDataSource = dataSource;
 
@@ -427,7 +430,7 @@ export default {
           this.dataSources = this.formatDataSources();
           this.hasAccessRules();
 
-          Fliplet.Studio.emit('data-sources-loaded', {
+          Fliplet.Widget.emit('data-sources-loaded', {
             dataSources: dataSources
           });
         })
@@ -601,6 +604,10 @@ export default {
             if (!this.securityEnabled && this.selectedDataSource) {
               this.confirmAccessRules();
             }
+
+            break;
+          case 'change-data-source':
+            this.onDataSourceChange();
 
             break;
           case 'set-data':

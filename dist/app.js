@@ -639,43 +639,47 @@ var required = window.validators.required;
       });
     },
     initProvider: function initProvider() {
+      var _this = this;
+
       this.widgetData = Fliplet.Widget.getData();
 
       if (this.widgetData.dataSourceId) {
-        return this.loadSelectedDataSource(this.widgetData.dataSourceId);
+        return this.loadSelectedDataSource(this.widgetData.dataSourceId).then(function () {
+          Fliplet.Widget.emit('selected-data-source-loaded', _this.widgetData.dataSourceId);
+        });
       }
 
       this.loadDataSources(this.widgetData.appId);
     },
     addAppToExistingRule: function addAppToExistingRule() {
-      var _this = this;
+      var _this2 = this;
 
       this.selectedDataSource.accessRules.forEach(function (dataSourceRule) {
-        if (!dataSourceRule.appId || !dataSourceRule.appId.length || _.includes(dataSourceRule.appId, _this.widgetData.appId)) {
+        if (!dataSourceRule.appId || !dataSourceRule.appId.length || _.includes(dataSourceRule.appId, _this2.widgetData.appId)) {
           return;
         }
 
-        if (!_.difference(_this.missingAccessTypes, dataSourceRule.type).length) {
-          return dataSourceRule.appId.push(_this.widgetData.appId);
+        if (!_.difference(_this2.missingAccessTypes, dataSourceRule.type).length) {
+          return dataSourceRule.appId.push(_this2.widgetData.appId);
         }
 
         var existingAccessTypes = [];
 
-        _this.missingAccessTypes.forEach(function (missingRule) {
+        _this2.missingAccessTypes.forEach(function (missingRule) {
           if (_.includes(dataSourceRule.type, missingRule)) {
             existingAccessTypes.push(missingRule);
           }
         });
 
         if (existingAccessTypes.length === dataSourceRule.type.length) {
-          dataSourceRule.appId.push(_this.widgetData.appId);
+          dataSourceRule.appId.push(_this2.widgetData.appId);
         }
 
-        _this.missingAccessTypes = _.difference(_this.missingAccessTypes, existingAccessTypes);
+        _this2.missingAccessTypes = _.difference(_this2.missingAccessTypes, existingAccessTypes);
       });
     },
     enableRequiredRules: function enableRequiredRules() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.selectedDataSource.accessRules.forEach(function (dataSourceRule) {
         if (dataSourceRule.enabled) {
@@ -684,10 +688,10 @@ var required = window.validators.required;
 
         var enabledAccessTypes = []; // If this rule has any missing access rule
 
-        _this2.missingAccessTypes.forEach(function (missingRule) {
+        _this3.missingAccessTypes.forEach(function (missingRule) {
           if (_.includes(dataSourceRule.type, missingRule)) {
             // If this rule for all or for current app
-            if (!dataSourceRule.appId || _.includes(dataSourceRule.appId, _this2.widgetData.appId)) {
+            if (!dataSourceRule.appId || _.includes(dataSourceRule.appId, _this3.widgetData.appId)) {
               enabledAccessTypes.push(missingRule); // Enable access rule
 
               dataSourceRule.enabled = true;
@@ -695,11 +699,11 @@ var required = window.validators.required;
           }
         });
 
-        _this2.missingAccessTypes = _.difference(_this2.missingAccessTypes, enabledAccessTypes);
+        _this3.missingAccessTypes = _.difference(_this3.missingAccessTypes, enabledAccessTypes);
       });
     },
     onAddDefaultSecurity: function onAddDefaultSecurity() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.isLoading = true;
 
@@ -709,23 +713,23 @@ var required = window.validators.required;
         this.addAppToExistingRule();
         this.enableRequiredRules();
         defaultRules.forEach(function (defaultRule) {
-          defaultRule.type = _this3.missingAccessTypes;
+          defaultRule.type = _this4.missingAccessTypes;
           defaultRule.enabled = true;
 
-          var accessRuleFound = _this3.selectedDataSource.accessRules.some(function (rule) {
+          var accessRuleFound = _this4.selectedDataSource.accessRules.some(function (rule) {
             // Rule considered as duplicated in case if we have the same rule types and same allow option.
             // And it's enabled
             // And it's related to all apps or to the current app
-            return defaultRule.allow === rule.allow && !_.difference(rule.type, defaultRule.type).length && rule.enabled && (!rule.appId || _.includes(rule.appId, _this3.widgetData.appId));
+            return defaultRule.allow === rule.allow && !_.difference(rule.type, defaultRule.type).length && rule.enabled && (!rule.appId || _.includes(rule.appId, _this4.widgetData.appId));
           }); // Add new rule only if it is not found
           // Or we if we have a missing rules to add
 
 
-          if (!accessRuleFound && _this3.missingAccessTypes.length) {
+          if (!accessRuleFound && _this4.missingAccessTypes.length) {
             // Split rules for each rule type
             // To add them as separate rules
             defaultRule.type.forEach(function (type) {
-              _this3.selectedDataSource.accessRules.push(_objectSpread(_objectSpread({}, defaultRule), {}, {
+              _this4.selectedDataSource.accessRules.push(_objectSpread(_objectSpread({}, defaultRule), {}, {
                 type: Array.isArray(type) ? type : [type]
               }));
             });
@@ -742,18 +746,18 @@ var required = window.validators.required;
         Fliplet.Modal.alert({
           message: 'Your changes have been applied to all affected apps.'
         }).then(function () {
-          _this3.hasAccessRules();
+          _this4.hasAccessRules();
 
-          _this3.securityAdded = true;
+          _this4.securityAdded = true;
         });
       })["catch"](function (err) {
-        _this3.showError(Fliplet.parseError(err));
+        _this4.showError(Fliplet.parseError(err));
       })["finally"](function () {
-        _this3.isLoading = false;
+        _this4.isLoading = false;
       });
     },
     hasAccessRules: function hasAccessRules() {
-      var _this4 = this;
+      var _this5 = this;
 
       if (!this.selectedDataSource) {
         this.securityEnabled = false;
@@ -777,9 +781,9 @@ var required = window.validators.required;
       var includedAccessTypes = [];
       this.missingAccessTypes = [];
       this.selectedDataSource.accessRules.forEach(function (dataSourceRules) {
-        _.forEach(_this4.widgetData.accessRules, function (componentRules) {
+        _.forEach(_this5.widgetData.accessRules, function (componentRules) {
           componentRules.type.forEach(function (componentType) {
-            if (_.includes(dataSourceRules.type, componentType) && dataSourceRules.enabled && (!dataSourceRules.appId || _.includes(dataSourceRules.appId, _this4.widgetData.appId))) {
+            if (_.includes(dataSourceRules.type, componentType) && dataSourceRules.enabled && (!dataSourceRules.appId || _.includes(dataSourceRules.appId, _this5.widgetData.appId))) {
               includedAccessTypes.push(componentType);
             }
           });
@@ -790,7 +794,7 @@ var required = window.validators.required;
       _.forEach(this.widgetData.accessRules, function (defaultRule) {
         defaultRule.type.forEach(function (defaultType) {
           if (!_.includes(includedAccessTypes, defaultType)) {
-            _this4.missingAccessTypes.push(defaultType);
+            _this5.missingAccessTypes.push(defaultType);
           }
         });
       });
@@ -812,7 +816,7 @@ var required = window.validators.required;
       }
     },
     onDataSourceCreate: function onDataSourceCreate() {
-      var _this5 = this;
+      var _this6 = this;
 
       Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["createDataSource"])(this.widgetData, this).then(function (dataSource) {
         if (!dataSource) {
@@ -823,87 +827,87 @@ var required = window.validators.required;
           // Specific fix for Vue 2.0.0(and above) render bug in IE11
           // https://github.com/vuejs/vue/issues/6209
           setTimeout(function () {
-            _this5.selectedDataSource = dataSource;
+            _this6.selectedDataSource = dataSource;
           }, 0);
         } else {
-          _this5.selectedDataSource = dataSource;
+          _this6.selectedDataSource = dataSource;
         }
 
-        if (_this5.allDataSources.length) {
-          _this5.allDataSources.push(dataSource);
+        if (_this6.allDataSources.length) {
+          _this6.allDataSources.push(dataSource);
         }
 
-        _this5.appDataSources.push(dataSource);
+        _this6.appDataSources.push(dataSource);
 
-        _this5.hasAccessRules();
+        _this6.hasAccessRules();
 
-        _this5.dataSources = _this5.formatDataSources();
+        _this6.dataSources = _this6.formatDataSources();
         Fliplet.Widget.emit('dataSourceSelect', dataSource);
       })["catch"](function (err) {
         if (Fliplet.Error.isHandled(err)) {
           return;
         }
 
-        _this5.showError(Fliplet.parseError(err));
+        _this6.showError(Fliplet.parseError(err));
       })["finally"](function () {
-        _this5.isLoading = false;
+        _this6.isLoading = false;
       });
     },
     loadSelectedDataSource: function loadSelectedDataSource(dataSourceId) {
-      var _this6 = this;
+      var _this7 = this;
 
-      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSource"])(dataSourceId).then(function (dataSource) {
-        _this6.selectedDataSource = dataSource;
-        Fliplet.Widget.emit('dataSourceSelect', _this6.selectedDataSource);
+      return Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSource"])(dataSourceId).then(function (dataSource) {
+        _this7.selectedDataSource = dataSource;
+        Fliplet.Widget.emit('dataSourceSelect', _this7.selectedDataSource);
 
-        _this6.hasAccessRules();
+        _this7.hasAccessRules();
       })["catch"](function (err) {
         if (err.status === 404) {
-          _this6.selectedDataSource = null;
-          _this6.widgetData.dataSourceId = null;
+          _this7.selectedDataSource = null;
+          _this7.widgetData.dataSourceId = null;
 
-          _this6.loadDataSources(_this6.widgetData.appId);
+          _this7.loadDataSources(_this7.widgetData.appId);
 
           return;
         }
 
-        _this6.showError(Fliplet.parseError(err));
+        _this7.showError(Fliplet.parseError(err));
       })["finally"](function () {
-        _this6.isLoading = false;
+        _this7.isLoading = false;
         Fliplet.Widget.autosize();
       });
     },
     loadDataSources: function loadDataSources(appId) {
-      var _this7 = this;
+      var _this8 = this;
 
       Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSources"])(appId).then(function (dataSources) {
-        if (_this7.widgetData.dataSourceId && _this7.selectedDataSource) {
+        if (_this8.widgetData.dataSourceId && _this8.selectedDataSource) {
           var selectedDataSourceFound = dataSources.some(function (dataSource) {
-            return dataSource.id === _this7.selectedDataSource.id;
+            return dataSource.id === _this8.selectedDataSource.id;
           });
 
           if (!selectedDataSourceFound) {
-            dataSources.push(_this7.selectedDataSource);
+            dataSources.push(_this8.selectedDataSource);
           }
         }
 
         if (appId) {
-          _this7.appDataSources = dataSources;
+          _this8.appDataSources = dataSources;
         } else {
-          _this7.allDataSources = dataSources;
+          _this8.allDataSources = dataSources;
         }
 
-        _this7.dataSources = _this7.formatDataSources();
+        _this8.dataSources = _this8.formatDataSources();
 
-        _this7.hasAccessRules();
+        _this8.hasAccessRules();
 
-        Fliplet.Studio.emit('data-sources-loaded', {
+        Fliplet.Widget.emit('data-sources-loaded', {
           dataSources: dataSources
         });
       })["catch"](function (err) {
-        _this7.showError(Fliplet.parseError(err));
+        _this8.showError(Fliplet.parseError(err));
       })["finally"](function () {
-        _this7.isLoading = false;
+        _this8.isLoading = false;
         Fliplet.Widget.autosize();
       });
     },
@@ -1009,7 +1013,7 @@ var required = window.validators.required;
       });
     },
     confirmAccessRules: function confirmAccessRules() {
-      var _this8 = this;
+      var _this9 = this;
 
       var message = "To use this feature, <code>".concat(this.missingAccessTypes.join(', ').toUpperCase(), "</code> access must be added to the data source");
       Fliplet.Modal.confirm({
@@ -1026,7 +1030,7 @@ var required = window.validators.required;
         }
       }).then(function (result) {
         if (result) {
-          _this8.onAddDefaultSecurity();
+          _this9.onAddDefaultSecurity();
         }
       });
     },
@@ -1037,43 +1041,48 @@ var required = window.validators.required;
     }
   },
   mounted: function mounted() {
-    var _this9 = this;
+    var _this10 = this;
 
     this.initProvider(); // Transfer selected DataSource id to the parent
 
     Fliplet.Widget.onSaveRequest(function () {
       Fliplet.Widget.save({
-        id: _this9.selectedDataSource ? _this9.selectedDataSource.id : null
+        id: _this10.selectedDataSource ? _this10.selectedDataSource.id : null
       });
     });
     Fliplet.Studio.onMessage(function (event) {
       if (event.data) {
         switch (event.data.event) {
           case 'overlay-close':
-            if (event.data.classes === 'data-source-overlay' && _this9.selectedDataSource) {
-              _this9.loadSelectedDataSource(_this9.selectedDataSource.id);
+            if (event.data.classes === 'data-source-overlay' && _this10.selectedDataSource) {
+              _this10.loadSelectedDataSource(_this10.selectedDataSource.id);
             }
 
             break;
 
           case 'validation':
-            _this9.hasError = !_this9.$v.selectedValue.$model;
+            _this10.hasError = !_this10.$v.selectedValue.$model;
             break;
 
           case 'update-security-rules':
-            _this9.widgetData.accessRules = event.data.accessRules;
+            _this10.widgetData.accessRules = event.data.accessRules;
 
-            _this9.hasAccessRules();
+            _this10.hasAccessRules();
 
-            if (!_this9.securityEnabled && _this9.selectedDataSource) {
-              _this9.confirmAccessRules();
+            if (!_this10.securityEnabled && _this10.selectedDataSource) {
+              _this10.confirmAccessRules();
             }
+
+            break;
+
+          case 'change-data-source':
+            _this10.onDataSourceChange();
 
             break;
 
           case 'set-data':
             // Update data source based on ID
-            _this9.onSelectChange({
+            _this10.onSelectChange({
               target: {
                 value: event.data.value
               }
@@ -1097,7 +1106,7 @@ var required = window.validators.required;
   watch: {
     showAll: {
       handler: function handler(value) {
-        var _this10 = this;
+        var _this11 = this;
 
         this.isLoading = true;
         this.dataSources = [];
@@ -1120,7 +1129,7 @@ var required = window.validators.required;
           var targetSources = this.allDataSources.length ? this.allDataSources : this.dataSources;
 
           if (!targetSources.some(function (currDS) {
-            return currDS.id === _this10.selectedDataSource.id;
+            return currDS.id === _this11.selectedDataSource.id;
           })) {
             this.selectedDataSource = null;
           }
@@ -1128,7 +1137,7 @@ var required = window.validators.required;
 
 
         this.$nextTick(function () {
-          _this10.isLoading = false;
+          _this11.isLoading = false;
         });
       }
     }
@@ -1280,7 +1289,7 @@ var createDataSource = function createDataSource(data, context) {
 
     if (!dataSourceName) {
       return Fliplet.Modal.alert({
-        message: 'Data source name can\'t be empty. Plaese enter data source name again.'
+        message: 'Data source name can\'t be empty. Please enter data source name again.'
       }).then(function () {
         return createDataSource(data);
       });
