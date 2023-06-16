@@ -896,6 +896,10 @@ var required = window.validators.required;
         _this7.dataSources = _this7.formatDataSources();
 
         _this7.hasAccessRules();
+
+        Fliplet.Studio.emit('data-sources-loaded', {
+          dataSources: dataSources
+        });
       })["catch"](function (err) {
         _this7.showError(Fliplet.parseError(err));
       })["finally"](function () {
@@ -1046,7 +1050,7 @@ var required = window.validators.required;
       if (event.data) {
         switch (event.data.event) {
           case 'overlay-close':
-            if (event.data.classes === 'data-source-overlay') {
+            if (event.data.classes === 'data-source-overlay' && _this9.selectedDataSource) {
               _this9.loadSelectedDataSource(_this9.selectedDataSource.id);
             }
 
