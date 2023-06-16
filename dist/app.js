@@ -844,6 +844,10 @@ var required = window.validators.required;
         _this6.dataSources = _this6.formatDataSources();
         Fliplet.Widget.emit('dataSourceSelect', dataSource);
       })["catch"](function (err) {
+        if (Fliplet.Error.isHandled(err)) {
+          return;
+        }
+
         _this6.showError(Fliplet.parseError(err));
       })["finally"](function () {
         _this6.isLoading = false;
