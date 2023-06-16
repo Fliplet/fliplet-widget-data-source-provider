@@ -373,6 +373,10 @@ export default {
           Fliplet.Widget.emit('dataSourceSelect', dataSource);
         })
         .catch(err => {
+          if (Fliplet.Error.isHandled(err)) {
+            return;
+          }
+
           this.showError(Fliplet.parseError(err));
         })
         .finally(() => {
