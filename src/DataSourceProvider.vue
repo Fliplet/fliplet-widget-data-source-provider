@@ -255,7 +255,7 @@ export default {
           }
         });
       } else {
-        this.selectedDataSource.accessRules = this.widgetData.accessRules.map(defaultRule => {
+        this.selectedDataSource.accessRules = _.map(this.widgetData.accessRules, defaultRule => {
           defaultRule.enabled = true;
 
           return defaultRule;
@@ -291,8 +291,8 @@ export default {
 
       if (!this.selectedDataSource.accessRules.length) {
         this.securityEnabled = false;
-        this.missingAccessTypes = this.widgetData.accessRules.map(rule => {
-          return rule.type.map(accessType => {
+        this.missingAccessTypes = _.map(this.widgetData.accessRules, rule => {
+          return _.map(rule.type, accessType => {
             return accessType;
           });
         });

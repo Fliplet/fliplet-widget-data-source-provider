@@ -736,7 +736,7 @@ var required = window.validators.required;
           }
         });
       } else {
-        this.selectedDataSource.accessRules = this.widgetData.accessRules.map(function (defaultRule) {
+        this.selectedDataSource.accessRules = _.map(this.widgetData.accessRules, function (defaultRule) {
           defaultRule.enabled = true;
           return defaultRule;
         });
@@ -770,8 +770,8 @@ var required = window.validators.required;
 
       if (!this.selectedDataSource.accessRules.length) {
         this.securityEnabled = false;
-        this.missingAccessTypes = this.widgetData.accessRules.map(function (rule) {
-          return rule.type.map(function (accessType) {
+        this.missingAccessTypes = _.map(this.widgetData.accessRules, function (rule) {
+          return _.map(rule.type, function (accessType) {
             return accessType;
           });
         });
