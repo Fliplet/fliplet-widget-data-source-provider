@@ -1281,7 +1281,7 @@ var getDataSource = function getDataSource(dataSourceId) {
 var createDataSource = function createDataSource(data, context) {
   return Fliplet.Modal.prompt({
     title: 'Enter a name for the data source',
-    value: data["default"].name || ''
+    value: _.get(data, 'default.name', '')
   }).then(function (dataSourceName) {
     if (dataSourceName === null) {
       return;
@@ -1289,19 +1289,31 @@ var createDataSource = function createDataSource(data, context) {
 
     if (!dataSourceName) {
       return Fliplet.Modal.alert({
-        message: 'Data source name can\'t be empty. Please enter data source name again.'
+        message: 'Data source name can\'t be empty. Please enter a data source name.'
       }).then(function () {
         return createDataSource(data);
       });
     }
 
     context.isLoading = true;
-    return Fliplet.DataSources.create({
+    var createOptions = {
       name: dataSourceName,
-      appId: data.appId,
-      entries: data["default"].entries,
-      columns: data["default"].columns
-    });
+      appId: data.appId
+    };
+
+    var entries = _.get(data, 'default.entries', []);
+
+    var columns = _.get(data, 'default.columns', []);
+
+    if (entries.length) {
+      createOptions.entries = entries;
+    }
+
+    if (columns.length) {
+      createOptions.columns = columns;
+    }
+
+    return Fliplet.DataSources.create(createOptions);
   });
 };
 var updateDataSourceSecurityRules = function updateDataSourceSecurityRules(dataSourceId, securityRules) {
