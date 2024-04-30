@@ -181,53 +181,94 @@ var render = function () {
           class: { "select-overlay": _vm.isLoading },
         },
         [
-          _c("section", { staticClass: "data-source-selector" }, [
-            _vm.dataSources.length ||
-            (!_vm.dataSources.length && !_vm.selectedDataSource)
-              ? _c("div", [
-                  _c(
-                    "label",
-                    {
-                      staticClass: "select-proxy-display",
-                      class: { "has-error": _vm.hasError },
-                      attrs: { for: "data-source-select" },
-                    },
-                    [
+          _vm.widgetData.readonly
+            ? _c("section", { staticClass: "data-source-selection" }, [
+                _vm.selectedDataSource
+                  ? _c("div", { staticClass: "selected-data-source" }, [
+                      _c("code", [_vm._v(_vm._s(_vm.selectedDataSource.id))]),
+                      _vm._v(" "),
+                      _c("span", [_vm._v(_vm._s(_vm.selectedDataSource.name))]),
+                    ])
+                  : _c("div", { staticClass: "alert alert-warning" }, [
+                      _vm._v("No data source selected"),
+                    ]),
+              ])
+            : _c("section", { staticClass: "data-source-selector" }, [
+                _vm.dataSources.length ||
+                (!_vm.dataSources.length && !_vm.selectedDataSource)
+                  ? _c("div", [
                       _c(
-                        "select",
+                        "label",
                         {
-                          ref: "select",
-                          staticClass: "hidden-select form-control",
-                          domProps: {
-                            value: _vm.selectedDataSource
-                              ? _vm.selectedDataSource.id
-                              : "",
-                          },
-                          on: { change: _vm.onSelectChange },
+                          staticClass: "select-proxy-display",
+                          class: { "has-error": _vm.hasError },
+                          attrs: { for: "data-source-select" },
                         },
                         [
-                          _c("option", { attrs: { value: "" } }, [
-                            _vm._v("-- Select data source"),
-                          ]),
-                          _vm._v(" "),
-                          !_vm.dataSources.length
-                            ? _c(
-                                "option",
-                                { attrs: { value: "none", disabled: "" } },
-                                [_vm._v("(No data source found)")]
-                              )
-                            : _vm.dataSources.length
-                            ? [
-                                !!_vm.allDataSources.length
-                                  ? _vm._l(_vm.dataSources, function (group) {
-                                      return _c(
-                                        "optgroup",
-                                        {
-                                          key: group.name,
-                                          attrs: { label: group.name },
-                                        },
-                                        _vm._l(
-                                          group.options,
+                          _c(
+                            "select",
+                            {
+                              ref: "select",
+                              staticClass: "hidden-select form-control",
+                              domProps: {
+                                value: _vm.selectedDataSource
+                                  ? _vm.selectedDataSource.id
+                                  : "",
+                              },
+                              on: { change: _vm.onSelectChange },
+                            },
+                            [
+                              _c("option", { attrs: { value: "" } }, [
+                                _vm._v("-- Select data source"),
+                              ]),
+                              _vm._v(" "),
+                              !_vm.dataSources.length
+                                ? _c(
+                                    "option",
+                                    { attrs: { value: "none", disabled: "" } },
+                                    [_vm._v("(No data source found)")]
+                                  )
+                                : _vm.dataSources.length
+                                ? [
+                                    !!_vm.allDataSources.length
+                                      ? _vm._l(
+                                          _vm.dataSources,
+                                          function (group) {
+                                            return _c(
+                                              "optgroup",
+                                              {
+                                                key: group.name,
+                                                attrs: { label: group.name },
+                                              },
+                                              _vm._l(
+                                                group.options,
+                                                function (option) {
+                                                  return _c(
+                                                    "option",
+                                                    {
+                                                      key: option.id,
+                                                      domProps: {
+                                                        value: option.id,
+                                                      },
+                                                    },
+                                                    [
+                                                      _vm._v(
+                                                        _vm._s(
+                                                          _vm.formatDataSourceOption(
+                                                            option
+                                                          )
+                                                        )
+                                                      ),
+                                                    ]
+                                                  )
+                                                }
+                                              ),
+                                              0
+                                            )
+                                          }
+                                        )
+                                      : _vm._l(
+                                          _vm.dataSources,
                                           function (option) {
                                             return _c(
                                               "option",
@@ -247,187 +288,191 @@ var render = function () {
                                             )
                                           }
                                         ),
-                                        0
-                                      )
-                                    })
-                                  : _vm._l(_vm.dataSources, function (option) {
-                                      return _c(
-                                        "option",
-                                        {
-                                          key: option.id,
-                                          domProps: { value: option.id },
-                                        },
-                                        [
-                                          _vm._v(
-                                            _vm._s(
-                                              _vm.formatDataSourceOption(option)
-                                            )
-                                          ),
-                                        ]
-                                      )
-                                    }),
-                              ]
-                            : _vm._e(),
-                        ],
-                        2
+                                  ]
+                                : _vm._e(),
+                            ],
+                            2
+                          ),
+                          _vm._v(" "),
+                          _c("span", {
+                            staticClass: "icon fa fa-chevron-down",
+                          }),
+                        ]
                       ),
-                      _vm._v(" "),
-                      _c("span", { staticClass: "icon fa fa-chevron-down" }),
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "a",
-                    {
-                      staticClass: "create-data-source",
-                      attrs: { href: "#" },
-                      on: {
-                        click: function ($event) {
-                          $event.preventDefault()
-                          return _vm.onDataSourceCreate.apply(null, arguments)
-                        },
-                      },
-                    },
-                    [_vm._v("Create new data source")]
-                  ),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "checkbox checkbox-icon" }, [
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.showAll,
-                          expression: "showAll",
-                        },
-                      ],
-                      attrs: {
-                        type: "checkbox",
-                        name: "showAll",
-                        id: "showAll",
-                      },
-                      domProps: {
-                        checked: Array.isArray(_vm.showAll)
-                          ? _vm._i(_vm.showAll, null) > -1
-                          : _vm.showAll,
-                      },
-                      on: {
-                        change: function ($event) {
-                          var $$a = _vm.showAll,
-                            $$el = $event.target,
-                            $$c = $$el.checked ? true : false
-                          if (Array.isArray($$a)) {
-                            var $$v = null,
-                              $$i = _vm._i($$a, $$v)
-                            if ($$el.checked) {
-                              $$i < 0 && (_vm.showAll = $$a.concat([$$v]))
-                            } else {
-                              $$i > -1 &&
-                                (_vm.showAll = $$a
-                                  .slice(0, $$i)
-                                  .concat($$a.slice($$i + 1)))
-                            }
-                          } else {
-                            _vm.showAll = $$c
-                          }
-                        },
-                      },
-                    }),
-                    _vm._v(" "),
-                    _vm._m(0),
-                  ]),
-                ])
-              : _vm.selectedDataSource && !_vm.changeDataSource
-              ? _c("div", [
-                  _c("div", { staticClass: "selected-data-source" }, [
-                    _c("div", { staticClass: "selected-data-source info" }, [
-                      _c("code", [_vm._v(_vm._s(_vm.selectedDataSource.id))]),
-                      _vm._v(" "),
-                      _c("span", [_vm._v(_vm._s(_vm.selectedDataSource.name))]),
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "a",
-                      {
-                        staticClass:
-                          "change-data-source selected-data-source action",
-                        on: {
-                          click: function ($event) {
-                            $event.preventDefault()
-                            return _vm.onDataSourceChange.apply(null, arguments)
-                          },
-                        },
-                      },
-                      [_vm._v("Change")]
-                    ),
-                  ]),
-                ])
-              : _vm._e(),
-            _vm._v(" "),
-            _c(
-              "div",
-              {
-                directives: [
-                  {
-                    name: "show",
-                    rawName: "v-show",
-                    value: _vm.selectedDataSource,
-                    expression: "selectedDataSource",
-                  },
-                ],
-                staticClass: "btn btn-default btn-view-data-source",
-                on: { click: _vm.viewDataSource },
-              },
-              [_vm._v("\n          View data source\n        ")]
-            ),
-            _vm._v(" "),
-            _c(
-              "section",
-              {
-                directives: [
-                  {
-                    name: "show",
-                    rawName: "v-show",
-                    value: _vm.showAccessRulesAlert,
-                    expression: "showAccessRulesAlert",
-                  },
-                ],
-                staticClass: "security-notify",
-              },
-              [
-                !_vm.securityEnabled
-                  ? _c("div", { staticClass: "alert alert-warning" }, [
-                      _vm._m(1),
-                      _vm._v(" "),
-                      _c("p", [
-                        _vm._v(
-                          "Configure security rules so the app can access the data"
-                        ),
-                      ]),
                       _vm._v(" "),
                       _c(
-                        "div",
+                        "a",
                         {
-                          staticClass: "btn btn-primary btn-security",
-                          on: { click: _vm.onAddDefaultSecurity },
+                          staticClass: "create-data-source",
+                          attrs: { href: "#" },
+                          on: {
+                            click: function ($event) {
+                              $event.preventDefault()
+                              return _vm.onDataSourceCreate.apply(
+                                null,
+                                arguments
+                              )
+                            },
+                          },
                         },
-                        [_vm._v("Configure security rules")]
+                        [_vm._v("Create new data source")]
                       ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "checkbox checkbox-icon" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.showAll,
+                              expression: "showAll",
+                            },
+                          ],
+                          attrs: {
+                            type: "checkbox",
+                            name: "showAll",
+                            id: "showAll",
+                          },
+                          domProps: {
+                            checked: Array.isArray(_vm.showAll)
+                              ? _vm._i(_vm.showAll, null) > -1
+                              : _vm.showAll,
+                          },
+                          on: {
+                            change: function ($event) {
+                              var $$a = _vm.showAll,
+                                $$el = $event.target,
+                                $$c = $$el.checked ? true : false
+                              if (Array.isArray($$a)) {
+                                var $$v = null,
+                                  $$i = _vm._i($$a, $$v)
+                                if ($$el.checked) {
+                                  $$i < 0 && (_vm.showAll = $$a.concat([$$v]))
+                                } else {
+                                  $$i > -1 &&
+                                    (_vm.showAll = $$a
+                                      .slice(0, $$i)
+                                      .concat($$a.slice($$i + 1)))
+                                }
+                              } else {
+                                _vm.showAll = $$c
+                              }
+                            },
+                          },
+                        }),
+                        _vm._v(" "),
+                        _vm._m(0),
+                      ]),
                     ])
-                  : _vm.securityAdded
-                  ? _c("div", { staticClass: "alert alert-success" }, [
-                      _vm._v(
-                        "\n            Security rules added. To manage security rules click "
-                      ),
-                      _c("b", [_vm._v("View data source")]),
-                      _vm._v(" above.\n          "),
+                  : _vm.selectedDataSource && !_vm.changeDataSource
+                  ? _c("div", [
+                      _c("div", { staticClass: "selected-data-source" }, [
+                        _c(
+                          "div",
+                          { staticClass: "selected-data-source info" },
+                          [
+                            _c("code", [
+                              _vm._v(_vm._s(_vm.selectedDataSource.id)),
+                            ]),
+                            _vm._v(" "),
+                            _c("span", [
+                              _vm._v(_vm._s(_vm.selectedDataSource.name)),
+                            ]),
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "a",
+                          {
+                            staticClass:
+                              "change-data-source selected-data-source action",
+                            on: {
+                              click: function ($event) {
+                                $event.preventDefault()
+                                return _vm.onDataSourceChange.apply(
+                                  null,
+                                  arguments
+                                )
+                              },
+                            },
+                          },
+                          [_vm._v("Change")]
+                        ),
+                      ]),
                     ])
                   : _vm._e(),
-              ]
-            ),
-          ]),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    directives: [
+                      {
+                        name: "show",
+                        rawName: "v-show",
+                        value: _vm.selectedDataSource,
+                        expression: "selectedDataSource",
+                      },
+                    ],
+                    staticClass: "btn btn-default btn-view-data-source",
+                    on: { click: _vm.viewDataSource },
+                  },
+                  [_vm._v("\n          View data source\n        ")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "section",
+                  {
+                    directives: [
+                      {
+                        name: "show",
+                        rawName: "v-show",
+                        value: _vm.showAccessRulesAlert,
+                        expression: "showAccessRulesAlert",
+                      },
+                    ],
+                    staticClass: "security-notify",
+                  },
+                  [
+                    !_vm.securityEnabled
+                      ? _c("div", { staticClass: "alert alert-warning" }, [
+                          _vm._m(1),
+                          _vm._v(" "),
+                          _c("p", [
+                            _vm._v(
+                              "Configure security rules so the app can access the data"
+                            ),
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            {
+                              staticClass: "btn btn-primary btn-security",
+                              on: { click: _vm.onAddDefaultSecurity },
+                            },
+                            [_vm._v("Configure security rules")]
+                          ),
+                        ])
+                      : _vm.securityAdded
+                      ? _c("div", { staticClass: "alert alert-success" }, [
+                          _vm._v(
+                            "\n            Security rules added. To manage security rules click "
+                          ),
+                          _c("b", [_vm._v("View data source")]),
+                          _vm._v(" above.\n          "),
+                        ])
+                      : _vm._e(),
+                  ]
+                ),
+              ]),
         ]
       ),
+      _vm._v(" "),
+      _vm.widgetData.helpText
+        ? _c("p", {
+            staticClass: "help-block",
+            domProps: { innerHTML: _vm._s(_vm.widgetData.helpText) },
+          })
+        : _vm._e(),
     ]),
   ])
 }
@@ -483,6 +528,14 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
