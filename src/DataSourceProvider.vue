@@ -10,7 +10,13 @@
       </div>
 
       <div class="main-data-source-provider" :class="{ 'select-overlay': isLoading }">
-        <section class="data-source-selector">
+        <section v-if="widgetData.readonly" class="data-source-selection">
+          <div v-if="selectedDataSource" class="selected-data-source">
+            <code>{{ selectedDataSource.id }}</code> <span>{{ selectedDataSource.name }}</span>
+          </div>
+          <div v-else class="alert alert-warning">No data source selected</div>
+        </section>
+        <section class="data-source-selector" v-else>
           <div v-if="dataSources.length || (!dataSources.length && !selectedDataSource)">
             <label for="data-source-select" class="select-proxy-display" v-bind:class="{ 'has-error': hasError }">
               <select
@@ -76,6 +82,8 @@
           </section>
         </section>
       </div>
+
+      <p v-if="widgetData.helpText" class="help-block" v-html="widgetData.helpText"></p>
     </div>
   </section>
 </template>

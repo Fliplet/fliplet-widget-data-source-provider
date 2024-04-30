@@ -16,7 +16,6 @@
 
 .btn-view-data-source {
   width: 100%;
-  margin-bottom: 15px;
 }
 
 .select-overlay {
@@ -36,10 +35,6 @@
   margin-top: 10px;
 }
 
-.main-data-source-provider {
-  padding-bottom: 10px;
-}
-
 .data-source-title {
   margin-bottom: 5px;
 }
@@ -51,6 +46,7 @@
 .selected-data-source {
   display: flex;
   width: 100%;
+  margin-bottom: 5px;
 
   .info {
     display: flex;
