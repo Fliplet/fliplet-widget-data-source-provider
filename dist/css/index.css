@@ -11,6 +11,7 @@
 }
 
 .alert {
+  margin-top: 10px;
   margin-bottom: 0px;
 }
 
@@ -53,11 +54,10 @@
   width: 80%;
 }
 .selected-data-source .info code {
-  width: 20%;
+  margin-right: 5px;
 }
 .selected-data-source .info span {
   display: inline-block;
-  width: 90%;
   overflow: hidden;
   text-overflow: ellipsis;
 }
