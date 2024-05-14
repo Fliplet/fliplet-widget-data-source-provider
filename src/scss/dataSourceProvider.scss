@@ -11,6 +11,7 @@
 }
 
 .alert {
+  margin-top: 10px;
   margin-bottom: 0px;
 }
 
@@ -53,12 +54,11 @@
     width: 80%;
 
     code {
-      width: 20%;
+      margin-right: 5px;
     }
 
     span {
       display: inline-block;
-      width: 90%;
       overflow: hidden;
       text-overflow: ellipsis;
     }
