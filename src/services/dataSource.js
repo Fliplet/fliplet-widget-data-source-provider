@@ -17,7 +17,7 @@ export const getDataSource = dataSourceId => {
 export const createDataSource = (data, context) => {
   return Fliplet.Modal.prompt({
     title: 'Enter a name for the data source',
-    value: _.get(data, 'default.name', '')
+    value: FlipletDSProviderUtils.get(data, 'default.name', '')
   })
     .then(dataSourceName => {
       if (dataSourceName === null) {
@@ -40,8 +40,8 @@ export const createDataSource = (data, context) => {
         appId: data.appId
       };
 
-      const entries = _.get(data, 'default.entries', []);
-      const columns = _.get(data, 'default.columns', []);
+      const entries = FlipletDSProviderUtils.get(data, 'default.entries', []);
+      const columns = FlipletDSProviderUtils.get(data, 'default.columns', []);
 
       if (entries.length) {
         createOptions.entries = entries;

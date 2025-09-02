@@ -10,13 +10,13 @@
       "vue.js",
       "fliplet-core",
       "fliplet-datasources",
-      "fliplet-studio-ui",
-      "lodash"
+      "fliplet-studio-ui"
     ],
     "assets": [
       "vendor/vuelidate.min.js",
       "vendor/validators.min.js",
       "vendor/init.js",
+      "js/utils.js",
       "dist/css/index.css",
       "dist/app.js"
     ]

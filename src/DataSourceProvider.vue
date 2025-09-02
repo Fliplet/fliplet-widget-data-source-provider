@@ -135,7 +135,7 @@ export default {
         value = null;
       } else if (this.allDataSources.length) {
         this.dataSources.some(group => {
-          let selectedOption = _.find(group.options, ['id', id]);
+          let selectedOption = FlipletDSProviderUtils.find(group.options, ['id', id]);
 
           if (selectedOption) {
             value = selectedOption;
@@ -146,7 +146,7 @@ export default {
           return false;
         });
       } else {
-        value = _.find(this.dataSources, ['id', id]);
+        value = FlipletDSProviderUtils.find(this.dataSources, ['id', id]);
       }
 
       this.selectedDataSource = value;
@@ -175,18 +175,18 @@ export default {
     },
     addAppToExistingRule() {
       this.selectedDataSource.accessRules.forEach(dataSourceRule => {
-        if (!dataSourceRule.appId || !dataSourceRule.appId.length || _.includes(dataSourceRule.appId, this.widgetData.appId)) {
+        if (!dataSourceRule.appId || !dataSourceRule.appId.length || FlipletDSProviderUtils.includes(dataSourceRule.appId, this.widgetData.appId)) {
           return;
         }
 
-        if (!_.difference(this.missingAccessTypes, dataSourceRule.type).length) {
+        if (!FlipletDSProviderUtils.difference(this.missingAccessTypes, dataSourceRule.type).length) {
           return dataSourceRule.appId.push(this.widgetData.appId);
         }
 
         let existingAccessTypes = [];
 
         this.missingAccessTypes.forEach(missingRule => {
-          if (_.includes(dataSourceRule.type, missingRule)) {
+          if (FlipletDSProviderUtils.includes(dataSourceRule.type, missingRule)) {
             existingAccessTypes.push(missingRule);
           }
         });
@@ -195,7 +195,7 @@ export default {
           dataSourceRule.appId.push(this.widgetData.appId);
         }
 
-        this.missingAccessTypes = _.difference(this.missingAccessTypes, existingAccessTypes);
+        this.missingAccessTypes = FlipletDSProviderUtils.difference(this.missingAccessTypes, existingAccessTypes);
       });
     },
     enableRequiredRules() {
@@ -208,10 +208,10 @@ export default {
 
         // If this rule has any missing access rule
         this.missingAccessTypes.forEach((missingRule) => {
-          if (_.includes(dataSourceRule.type, missingRule)) {
+          if (FlipletDSProviderUtils.includes(dataSourceRule.type, missingRule)) {
             // If this rule for all or for current app
             if (
-              (!dataSourceRule.appId || _.includes(dataSourceRule.appId, this.widgetData.appId))
+              (!dataSourceRule.appId || FlipletDSProviderUtils.includes(dataSourceRule.appId, this.widgetData.appId))
             ) {
               enabledAccessTypes.push(missingRule);
 
@@ -221,13 +221,13 @@ export default {
           }
         });
 
-        this.missingAccessTypes = _.difference(this.missingAccessTypes, enabledAccessTypes);
+        this.missingAccessTypes = FlipletDSProviderUtils.difference(this.missingAccessTypes, enabledAccessTypes);
       });
     },
     onAddDefaultSecurity() {
       this.isLoading = true;
 
-      const defaultRules = _.cloneDeep(this.widgetData.accessRules);
+      const defaultRules = FlipletDSProviderUtils.cloneDeep(this.widgetData.accessRules);
 
       if (this.selectedDataSource.accessRules && this.selectedDataSource.accessRules.length > 0) {
         this.addAppToExistingRule();
@@ -243,9 +243,9 @@ export default {
             // And it's related to all apps or to the current app
             return (
               defaultRule.allow === rule.allow
-                && !_.difference(rule.type, defaultRule.type).length
+                && !FlipletDSProviderUtils.difference(rule.type, defaultRule.type).length
                 && rule.enabled
-                && (!rule.appId || _.includes(rule.appId, this.widgetData.appId))
+                && (!rule.appId || FlipletDSProviderUtils.includes(rule.appId, this.widgetData.appId))
             );
           });
 
@@ -263,7 +263,7 @@ export default {
           }
         });
       } else {
-        this.selectedDataSource.accessRules = _.map(this.widgetData.accessRules, defaultRule => {
+        this.selectedDataSource.accessRules = FlipletDSProviderUtils.map(this.widgetData.accessRules, defaultRule => {
           defaultRule.enabled = true;
 
           return defaultRule;
@@ -299,8 +299,8 @@ export default {
 
       if (!this.selectedDataSource.accessRules.length) {
         this.securityEnabled = false;
-        this.missingAccessTypes = _.map(this.widgetData.accessRules, rule => {
-          return _.map(rule.type, accessType => {
+        this.missingAccessTypes = FlipletDSProviderUtils.map(this.widgetData.accessRules, rule => {
+          return FlipletDSProviderUtils.map(rule.type, accessType => {
             return accessType;
           });
         });
@@ -313,12 +313,12 @@ export default {
       this.missingAccessTypes = [];
 
       this.selectedDataSource.accessRules.forEach(dataSourceRules => {
-        _.forEach(this.widgetData.accessRules, componentRules => {
+        FlipletDSProviderUtils.forEach(this.widgetData.accessRules, componentRules => {
           componentRules.type.forEach(componentType => {
             if (
-              _.includes(dataSourceRules.type, componentType)
+              FlipletDSProviderUtils.includes(dataSourceRules.type, componentType)
               && dataSourceRules.enabled
-              && (!dataSourceRules.appId || _.includes(dataSourceRules.appId, this.widgetData.appId))
+              && (!dataSourceRules.appId || FlipletDSProviderUtils.includes(dataSourceRules.appId, this.widgetData.appId))
             ) {
               includedAccessTypes.push(componentType);
             }
@@ -326,17 +326,17 @@ export default {
         });
       });
 
-      includedAccessTypes = _.uniq(includedAccessTypes);
+      includedAccessTypes = FlipletDSProviderUtils.uniq(includedAccessTypes);
 
-      _.forEach(this.widgetData.accessRules, defaultRule => {
+      FlipletDSProviderUtils.forEach(this.widgetData.accessRules, defaultRule => {
         defaultRule.type.forEach(defaultType => {
-          if (!_.includes(includedAccessTypes, defaultType)) {
+          if (!FlipletDSProviderUtils.includes(includedAccessTypes, defaultType)) {
             this.missingAccessTypes.push(defaultType);
           }
         });
       });
 
-      this.missingAccessTypes = _.uniq(this.missingAccessTypes);
+      this.missingAccessTypes = FlipletDSProviderUtils.uniq(this.missingAccessTypes);
 
       if (this.missingAccessTypes.length) {
         this.securityEnabled = false;
@@ -474,7 +474,7 @@ export default {
       return allDataSources.filter(group => !!group.options.length);
     },
     getOtherAppsDataSources(dataSources) {
-      return _.difference(dataSources, this.appDataSources, 'id');
+      return FlipletDSProviderUtils.difference(dataSources, this.appDataSources, 'id');
     },
     formatDataSourceOption(data) {
       const { id, name, text } = data;
