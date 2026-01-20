@@ -639,7 +639,7 @@ var required = window.validators.required;
       showAll: false,
       securityAdded: false,
       defaultAccessRules: [{
-        type: ['select', 'insert', 'update', 'delete'],
+        type: ['select', 'insert', 'update', 'delete', 'count'],
         allow: 'all',
         enabled: true
       }]

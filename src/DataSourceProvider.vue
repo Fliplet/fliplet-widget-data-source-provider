@@ -112,7 +112,7 @@ export default {
       showAll: false,
       securityAdded: false,
       defaultAccessRules: [
-        { type: ['select', 'insert', 'update', 'delete'], allow: 'all', enabled: true }
+        { type: ['select', 'insert', 'update', 'delete', 'count'], allow: 'all', enabled: true }
       ]
     };
   },
